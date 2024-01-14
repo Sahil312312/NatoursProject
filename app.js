@@ -3,9 +3,16 @@ const morgan = require("morgan");
 const AppError = require('./utils/appError')
 const globalErrorController = require('./controllers/errorController')
 const app = express();
+
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+//middleware
+app.use((req,res,next)=>{
+  // console.log(req.headers);
+  next();
+})
 
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRouter");

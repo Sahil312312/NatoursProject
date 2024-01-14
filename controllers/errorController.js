@@ -43,6 +43,10 @@ const sendErrorProd = (err, res) => {
   }
 };
 
+const handleError = err => new AppError('Invalid token please login again',404)
+
+const handleEJWTExpires = err =>new AppError('Your token has been expired',404)
+
 // Error handler middleWare
 //kahi pr bhi err aayega woh apne aap isme aaeyga
 //express provide us this func that is error kissi bhi middleware m ho apne aap err handling middleware m aajati h
@@ -58,6 +62,9 @@ module.exports = (err, req, res, next) => {
     if(err.name==="CastError") error = handleCastErrorDB(error)
     if(err.code === 11000) error=handleDuplicateErrorDB(error)
     if(err.name === 'ValidationError') error = handleValidationErrorDB(error)
+    if(err.name === 'JsonWebTokenError') error = handleError(error)
+        if(err.name === 'TokenExpiredError') error = handleEJWTExpires(error)
+
     sendErrorProd(error, res);
   }
 };
