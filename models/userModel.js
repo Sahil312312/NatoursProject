@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
@@ -20,6 +21,11 @@ const userSchema = new mongoose.Schema({
   photo: {
     type: String,
   },
+  role: {
+    type: String,
+    enum: ["users", "guide", "lead-guide", "admin"],
+    default: "users",
+  },
   password: {
     type: String,
     required: [true, "Please provide password"],
@@ -39,7 +45,14 @@ const userSchema = new mongoose.Schema({
     },
   },
   passwordChangedAt: {
-    type:Date
+    type: Date,
+  },
+  passwordResetToken: String,
+  passwordResetExpire: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    select:false
   },
 });
 
@@ -50,6 +63,13 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 12);
 
   this.passwordConfirm = undefined;
+  next();
+});
+
+//y query middleware humesa tbhi chlega jb bhi string find s shuru hogie i.e. findByIAd,findOne,findByIdandUpdate
+
+userSchema.pre("/^find/", async function (next) {
+  this.find({ actove: { $ne: false } });
   next();
 });
 
@@ -68,12 +88,26 @@ userSchema.methods.changePasswordAfter = function (JWTtimestamp) {
       this.passwordChangedAt.getTime() / 1000,
       10
     );
-      return JWTtimestamp<changedTimestamp; //300 < 200
-
+    return JWTtimestamp < changedTimestamp; //300 < 200
   }
   return false;
   //false means password not changed
 };
+
+// userSchema.methods.createPasswordResetToken = function () {
+//   const resetToken = crypto.randomBytes(32).toString("hex");
+
+//   this.passwordResetToken = crypto
+//     .createHash("sha256")
+//     .update(resetToken)
+//     .digest("hex");
+
+//   this.passwordResetExpire = Date.now() + 10 * 60 * 1000;
+
+//   console.log(resetToken, this.passwordResetToken);
+
+//   return resetToken;
+// };
 
 const User = mongoose.model("User", userSchema);
 

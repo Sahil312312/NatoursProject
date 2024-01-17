@@ -20,7 +20,7 @@ router
 router //in express everything is middleware and these route are also middleware call on specfic url
   .route("/:id")
   .get(tourController.getSpecicTour)
-  .delete(tourController.deleteTour)
+  .delete(authController.restrictTo('admin','lead-guide'),tourController.deleteTour)
   .patch(tourController.updateTour);
 
 module.exports = router;
