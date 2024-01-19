@@ -7,7 +7,7 @@ const { match } = require("assert");
 const APIFeature = require("./../utils/APIfeature");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
- 
+
 // const tours = JSON.parse(
 //   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 // );
@@ -58,7 +58,8 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 });
 
 exports.getSpecicTour = catchAsync(async (req, res, next) => {
-  const tour = await Tours.findById(req.params.id);
+  const tour = await Tours.findOne({ _id: req.params.id });
+
   //return lgna imp h warna hum do return statement m phas jaiyge
   if (!tour) {
     return next(new AppError("No Tour Found", 404));

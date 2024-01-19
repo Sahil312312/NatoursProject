@@ -87,3 +87,4 @@ exports.deleteUser = (req, res) => {
     data: "user Deleted",
   });
 };
+

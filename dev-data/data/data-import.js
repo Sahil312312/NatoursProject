@@ -1,18 +1,20 @@
-const mongoose = require("mongoose");
 const fs = require("fs");
+const mongoose = require("mongoose");
+
 const dotenv = require("dotenv");
+dotenv.config({ path: "./config.env" });
+
 const Tour = require("./../../models/tourModel");
-dotenv.config({ path: "./../../config.env" });
 
 const DB = process.env.DATABASE.replace(
   "<PASSWORD>",
   process.env.DATABASE_PASSWORD
 );
 
-mongoose.connect(DB).then((res) => console.log("Database Connected..."));
+mongoose.connect(DB).then(() => console.log("DB connected"));
 
 const data = JSON.parse(
-  fs.readFileSync(`${__dirname}/tours-simple.json`, "utf-8")
+  fs.readFileSync(`${__dirname}/tours.json`, "utf-8")
 );
 
 const importData = async () => {
@@ -35,4 +37,6 @@ const deleteData = async () => {
   }
 };
 
-importData();
+importData()
+
+// deleteData();
