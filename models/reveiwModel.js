@@ -12,6 +12,11 @@ const reveiwSchema = new mongoose.Schema(
       min: 1,
       max: 5,
     },
+    createdAt:{
+      type:Date,
+      default:Date.now()
+
+    },
     tour: {
       type: mongoose.Schema.ObjectId,
       required: true,
@@ -29,6 +34,21 @@ const reveiwSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+reveiwSchema.pre(/^find/,function(next){
+  // this.populate({
+  //   path:'tour',
+  //   select:'name'
+  // }).populate({
+  //   path:'user',
+  //   select:'name photo '
+  // })
+   this.populate({
+    path:'user',
+    select:'name photo '
+  })
+  next()
+})
 
 const Review = mongoose.model("Review", reveiwSchema);
 module.exports = Review;

@@ -103,7 +103,8 @@ const tourSchema = new mongoose.Schema(
         type : mongoose.Schema.ObjectId,
         ref:'User'
       }
-    ]
+    ],
+
   },
   {
     toJSON: { virtuals: true },
@@ -117,6 +118,15 @@ const tourSchema = new mongoose.Schema(
 tourSchema.virtual("durationWeeks").get(function () {
   return this.duration / 7;
 });
+
+//virtual populate
+//when we use parent ref and we want child info in parent obj but didnt ant to do child ref because of infinte growth of child ref id array
+
+tourSchema.virtual('reviews',{
+  ref:'Review',
+  foreignField:'tour',
+  localField:'_id'
+})
 
 //DOCUMENT MIDDLEWARE
 //before actuall doc save to db

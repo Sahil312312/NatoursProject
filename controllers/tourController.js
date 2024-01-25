@@ -58,7 +58,7 @@ exports.getAllTours = catchAsync(async (req, res, next) => {
 });
 
 exports.getSpecicTour = catchAsync(async (req, res, next) => {
-  const tour = await Tours.findOne({ _id: req.params.id });
+  const tour = await Tours.findOne({ _id: req.params.id }).populate('reviews');
 
   //return lgna imp h warna hum do return statement m phas jaiyge
   if (!tour) {

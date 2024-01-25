@@ -11,7 +11,7 @@ const hpp = require("hpp");
 
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRouter");
-
+const reviewRouter = require("./routes/reviewRoutes")
 
 
 //// 1) GLOBAL MIDDLEWARES
@@ -66,6 +66,8 @@ app.use(express.static(`${__dirname}/public`));
 //mounting the route
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/reviews", reviewRouter);
+
 
 app.all("*", (req, res, next) => {
   //agar next m koi bhi parameter daloge woh apne app err middleware k pass jaiyga
