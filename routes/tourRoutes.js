@@ -24,7 +24,7 @@ router
 router //in express everything is middleware and these route are also middleware call on specfic url
   .route("/:id")
   .get(tourController.getSpecicTour)
-  .delete(authController.restrictTo('admin','lead-guide'),tourController.deleteTour)
+  .delete(tourController.deleteTour)
   .patch(tourController.updateTour);
 
 // router.route('/:tourId/reviews').post(authController.protect,authController.restrictTo('users'),reviewController.createReview)

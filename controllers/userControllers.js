@@ -25,14 +25,22 @@ exports.getAllUser = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getSpecficUser = (req, res) => {
+exports.getMe = catchAsync(async(req,res,next)=>{
+  req.params.id = req.user.id;
+  next()
+})
+
+exports.getSpecficUser = catchAsync(async(req, res) => {
+
+const user = await User.findById(req.params.id);
+
   res.status(200).json({
     status: "success",
     data: {
-      user: "A",
+      user: user,
     },
   });
-};
+});
 exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError(        'This route is not for password updates. Please use /updateMyPassword.', 400));

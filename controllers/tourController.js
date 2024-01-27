@@ -7,6 +7,7 @@ const { match } = require("assert");
 const APIFeature = require("./../utils/APIfeature");
 const catchAsync = require("./../utils/catchAsync");
 const AppError = require("./../utils/appError");
+const factory = require('./../controllers/handlerFactory')
 
 // const tours = JSON.parse(
 //   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
@@ -40,22 +41,7 @@ exports.aliasTopFive = async (req, res, next) => {
   next();
 };
 
-exports.getAllTours = catchAsync(async (req, res, next) => {
-  const features = new APIFeature(Tours.find(), req.query)
-    .filter()
-    .sort()
-    .limitFeilds();
-
-  const tours = await features.query;
-
-  res.status(200).json({
-    status: "success",
-    result: tours.length,
-    data: {
-      tours,
-    },
-  });
-});
+exports.getAllTours = factory.getAllDocs(Tours);
 
 exports.getSpecicTour = catchAsync(async (req, res, next) => {
   const tour = await Tours.findOne({ _id: req.params.id }).populate('reviews');
@@ -75,46 +61,25 @@ exports.getSpecicTour = catchAsync(async (req, res, next) => {
   // const tour = tours.find((el) => el.id === tourId);
 });
 
-exports.createTour = catchAsync(async (req, res, next) => {
-  const newTour = await Tours.create(req.body);
-  res.status(201).json({
-    status: "success",
-    data: {
-      tour: newTour,
-    },
-  });
-});
+// exports.createTour = catchAsync(async (req, res, next) => {
+//   const newTour = await Tours.create(req.body);
+//   res.status(201).json({
+//     status: "success",
+//     data: {
+//       tour: newTour,
+//     },
+//   });
+// });
 
-exports.deleteTour = catchAsync(async (req, res, next) => {
-  const tour = await Tours.findByIdAndDelete(req.params.id);
+exports.createTour = factory.createOne(Tours);
 
-  if (!tour) {
-    return next(new AppError("No Tour Found", 404));
-  }
 
-  res.status(204).json({
-    status: "success",
-    data: null,
-  });
-});
 
-exports.updateTour = catchAsync(async (req, res, next) => {
-  const tour = await Tours.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  });
+exports.deleteTour = factory.deleteOne(Tours)
 
-  if (!tour) {
-    return next(new AppError("No Tour Found", 404));
-  }
 
-  res.status(200).json({
-    status: "success",
-    data: {
-      tour,
-    },
-  });
-});
+
+exports.updateTour = factory.updateOne(Tours)
 
 //aggretation is like query limit group match
 

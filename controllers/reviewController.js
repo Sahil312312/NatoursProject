@@ -4,50 +4,24 @@ const Review = require("./../models/reveiwModel");
 const User = require("../models/userModel");
 const AppErr = require("./../utils/appError");
 const APIFeature = require("../utils/APIfeature");
+const factory = require('./../controllers/handlerFactory')
 
-exports.createReview = catchAsync(async(req,res,next)=>{
-    if(!req.body.tour) req.body.tour = req.params.tourId
-    if(!req.body.user) req.body.user = req.user._id 
-    const {review,rating}  = req.body;
-    const tourId = req.body.tour;
-    const userId = req.body.user;
- 
-    const tour = await  Tour.findById(tourId);
-    const user = await User.findById(userId);
+exports.setIds = async(req,res,next) => {
+ if(!req.body.tour) req.body.tour = req.params.tourId
+    if(!req.body.user) req.body.user = req.user.id 
+
+    const tour = await  Tour.findById(req.body.tour);
+    const user = await User.findById(req.body.user);
 
     if(!tour || !user){
         return next(new AppErr('Please provide correct tour and user IDs '))
     }
+    next()
+}
 
-    const reviewData = await Review.create(req.body)
+exports.createReview = factory.createOne(Review)
 
-    res.status(201).json({
-    status: "success",
-    data: {
-      reviewData,
-    },
-  });
-
-    
-})
-
-exports.getAllReviews = catchAsync(async(req,res,next)=>{
-let filter = {};
-
-if(req.params.tourId) filter = {tour : req.params.tourId}
-
-  const review = await Review.find(filter);
-
-  res.status(200).json({
-    status: "success",
-    result: review.length,
-    data: {  
-      review,
-    },
-  });
-
-
-})
+exports.getAllReviews = factory.getAllDocs(Review)
 
 exports.getSpecficReview = catchAsync(async(req,res,next)=>{
  const reviewID  = req.params.id;
